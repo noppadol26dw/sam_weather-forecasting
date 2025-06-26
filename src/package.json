@@ -1,0 +1,14 @@
+{
+    "name": "weather-notification-email",
+    "version": "1.0.0",
+    "description": "Daily weather notification via email",
+    "main": "index.js",
+    "scripts": {
+      "test": "node index.js"
+    },
+    "dependencies": {
+      "aws-sdk": "^2.1691.0"
+    },
+    "author": "GGEZ Cloud",
+    "license": "MIT"
+  }

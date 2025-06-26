@@ -1,0 +1,68 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Weather notification system via email
+
+Parameters:
+  OpenWeatherApiKey:
+    Type: String
+    Description: OpenWeatherMap API Key
+    NoEcho: true
+  SenderEmail:
+    Type: String
+    Description: Verified sender email address for SES
+  RecipientEmail:
+    Type: String
+    Description: Recipient email address for weather notifications
+  Latitude:
+    Type: String
+    Default: "<YOUR_LATITUDE>"
+    Description: Latitude for weather check
+  Longitude:
+    Type: String
+    Default: "<YOUR_LONGITUDE>"
+    Description: Longitude for weather check
+  NotificationTime:
+    Type: String
+    Default: "cron(0 23 * * ? *)"
+    Description: Cron expression for notification time (UTC)
+
+Globals:
+  Function:
+    Timeout: 30
+    Runtime: nodejs20.x
+    Environment:
+      Variables:
+        OPENWEATHER_API_KEY: !Ref OpenWeatherApiKey
+        SENDER_EMAIL: !Ref SenderEmail
+        RECIPIENT_EMAIL: !Ref RecipientEmail
+        LATITUDE: !Ref Latitude
+        LONGITUDE: !Ref Longitude
+
+Resources:
+  WeatherNotificationFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: src/
+      Handler: index.handler
+      Policies:
+        - Version: "2012-10-17"
+          Statement:
+            - Effect: Allow
+              Action:
+                - ses:SendEmail
+                - ses:SendRawEmail
+              Resource: 
+                - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${SenderEmail}"
+                - !Sub "arn:aws:ses:${AWS::Region}:${AWS::AccountId}:identity/${RecipientEmail}"
+      Events:
+        DailyWeatherCheck:
+          Type: Schedule
+          Properties:
+            Schedule: !Ref NotificationTime
+            Description: Daily weather notification
+            Enabled: true
+
+Outputs:
+  WeatherNotificationFunction:
+    Description: "Weather Notification Lambda Function ARN"
+    Value: !GetAtt WeatherNotificationFunction.Arn

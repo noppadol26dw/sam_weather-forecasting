@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(mv:*)",
+      "Bash(aws ses verify-email-identity:*)",
+      "Bash(sam:*)"
+    ],
+    "deny": []
+  }
+}
