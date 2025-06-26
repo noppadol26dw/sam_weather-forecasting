@@ -112,26 +112,6 @@ During the guided deployment, you'll be prompted for:
 | `Longitude` | Your location longitude | `100.5018` |
 | `NotificationTime` | Cron expression for scheduling | `cron(0 23 * * ? *)` |
 
-### 4. Alternative: Deploy with Parameter File
-
-Create a `parameters.json` file:
-```json
-{
-  "Parameters": {
-    "OpenWeatherApiKey": "your_openweather_api_key",
-    "SenderEmail": "weather@yourdomain.com",
-    "RecipientEmail": "your-email@gmail.com",
-    "Latitude": "13.7563",
-    "Longitude": "100.5018",
-    "NotificationTime": "cron(0 23 * * ? *)"
-  }
-}
-```
-
-Then deploy:
-```bash
-sam deploy --parameter-overrides $(cat parameters.json | jq -r '.Parameters | to_entries[] | "\(.key)=\(.value)"' | tr '\n' ' ')
-```
 
 ## Configuration
 
